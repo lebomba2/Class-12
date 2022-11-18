@@ -1,28 +1,26 @@
 ﻿using EFBlogPost.Models;
 using Microsoft.EntityFrameworkCore;
-
 namespace EFBlogPost
 {
     internal class Program
     {
-        // Assignment Menu
-        //1. Display Blogs
-        //2. Add Blog
-        //3. Display Posts
-        //4. Add Post
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Make a choice");
-            Console.WriteLine("1. Display Blogs");
-            Console.WriteLine("2. Add Blog");
-            Console.WriteLine("3. Display Posts");
-            Console.WriteLine("4. Add Post");
-            var userInput = Console.ReadLine();
 
-            switch (userInput)
+            bool isValid = true;
+
+            while (isValid == true)
             {
-                case "1":
+                Console.WriteLine("Make a choice");
+                Console.WriteLine("1. Display Blogs");
+                Console.WriteLine("2. Add Blog");
+                Console.WriteLine("3. Display Posts");
+                Console.WriteLine("4. Add Post");
+                var userInput = Console.ReadLine();
+
+                if (userInput == "1")
+                {
                     // 1. Read Blogs from database
                     using (var db = new BlogContext())
                     {
@@ -30,11 +28,14 @@ namespace EFBlogPost
 
                         foreach (var b in db.Blogs)
                         {
-                            Console.WriteLine($"Blog: {b.BlogId}: {b.Name}");
+                            Console.WriteLine($"Blog ID     : {b.BlogId}: {b.Name}");
                         }
                     }
-                    break;
-                case "2":
+
+                }
+                else if (userInput == "2")
+                {
+
                     // 2. Add Blog to Database
                     Console.WriteLine("Enter your Blog name");
                     var blogName = Console.ReadLine();
@@ -49,8 +50,10 @@ namespace EFBlogPost
                         db.Blogs.Add(blog);
                         db.SaveChanges();
                     }
-                    break;
-                case "3":
+
+                }
+                else if (userInput == "3")
+                {
                     // 3. List Posts for Blog 
                     Console.WriteLine("Select the blog id");
                     var blogId = Convert.ToInt32(Console.ReadLine());
@@ -59,17 +62,19 @@ namespace EFBlogPost
                     using (var db = new BlogContext())
                     {
                         // only change for Eager Loading is to add the ".Include(x=>x.Posts)" 
-                        blog2 = db.Blogs.Include(x=>x.Posts).FirstOrDefault(x => x.BlogId == blogId);
+                        blog2 = db.Blogs.Include(x => x.Posts).FirstOrDefault(x => x.BlogId == blogId);
 
                         System.Console.WriteLine($"Posts for Blog {blog2.Name}");
                     }
-                    
+
                     foreach (var post in blog2.Posts)
                     {
                         System.Console.WriteLine($"\tPost {post.PostId} {post.Title}");
                     }
-                    break;
-                case "4":
+
+                }
+                else if (userInput == "4")
+                {
                     // 4. Add Post to database
                     Console.WriteLine("Select the blog id");
                     var blogId2 = Convert.ToInt32(Console.ReadLine());
@@ -95,17 +100,15 @@ namespace EFBlogPost
                         Console.WriteLine(ex.Message);
                         Console.WriteLine(ex.InnerException);
                     }
-                    break;
-                default:
-                    break;
-            }
 
+                }
+                else
+                {
+                    Console.WriteLine("You have exited the program");
+                    isValid = false;
+                }
 
-
-
-
-
-
+            }// end of while loop
         }
     }
 }
